@@ -57,8 +57,25 @@ cd frontend
 
 # API Endpoints
 
-## Authentication
-
 ## Product Management
 
-## Shopping Cart and Orders
+- `/store/products/`
+- `/store/products/{id}/`
+
+## Shopping Cart
+
+- `/store/cart/`
+- `/store/cart/{cart_id}/`
+- `/store/cart/{cart_id}/items/`
+
+## Orders
+
+- `store/orders/`
+
+## Authentication
+
+- `/auth/jwt/create/`
+- `/auth/jwt/refresh/`
+- `/auth/users/me/`
+
+## User Management
