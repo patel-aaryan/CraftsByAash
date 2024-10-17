@@ -26,6 +26,7 @@ This project is a full-stack ecommerce platform designed for showcasing and sell
 - **Deployment**: AWS, Vercel
 
 ## Prerequisites
+
 - Python 3.12.2
 - Node.js (v18.x)
 - MySQL (or use AWS RDS for production)
@@ -34,6 +35,30 @@ This project is a full-stack ecommerce platform designed for showcasing and sell
 - Stripe Account
 
 # Setup Instructions
+
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/patel-aaryan/CraftsByAash.git
+cd CraftsByAash
 ```
+
+### 2. Backend Setup
+
+```bash
+cd backend
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+```
+
+# API Endpoints
+
+## Authentication
+
+## Product Management
+
+## Shopping Cart and Orders
