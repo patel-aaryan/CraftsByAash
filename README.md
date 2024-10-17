@@ -24,3 +24,16 @@ This project is a full-stack ecommerce platform designed for showcasing and sell
 - **Authentication**: JSON Web Tokens (JWT)
 - **Version Control**: Git
 - **Deployment**: AWS, Vercel
+
+## Prerequisites
+- Python 3.12.2
+- Node.js (v18.x)
+- MySQL (or use AWS RDS for production)
+- Docker
+- AWS Account (with access to S3, RDS)
+- Stripe Account
+
+# Setup Instructions
+```bash
+git clone https://github.com/patel-aaryan/CraftsByAash.git
+```
