@@ -1,9 +1,10 @@
 from uuid import uuid4
+
+from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from .constants import *
-from django.core.validators import MinValueValidator
-from django.conf import settings
 
 
 def generate_uuid():
@@ -11,7 +12,7 @@ def generate_uuid():
 
 
 class User(models.Model):
-    phone = models.CharField(max_length=MAX_LENGTH)
+    phone = models.CharField(max_length=MAX_PHONE)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, models.CASCADE)
 
     def __str__(self) -> str:
@@ -24,19 +25,17 @@ class User(models.Model):
         ]
 
 
-class UserPayment(models.Model):
-    payment_id = models.CharField(
-        primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
-    user = models.ForeignKey(User, models.CASCADE)
-    payment_type = models.CharField(max_length=MAX_LENGTH)
-    provider = models.CharField(max_length=MAX_LENGTH)
-
-
 class Category(models.Model):
     category_id = models.CharField(
         primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
     name = models.CharField(max_length=MAX_LENGTH)
     description = models.TextField()
+
+
+class Colours(models.Model):
+    name = models.CharField(max_length=MAX_LENGTH)
+    hex = models.CharField(max_length=MAX_COLOUR)
+    rgba = models.CharField(max_length=MAX_RGB)
 
 
 class Product(models.Model):
@@ -50,8 +49,7 @@ class Product(models.Model):
 
     category = models.ForeignKey(Category, models.PROTECT, null=True)
     inventory = models.PositiveIntegerField()
-    colour = models.CharField(max_length=MAX_LENGTH)
-    shape = models.CharField(max_length=MAX_LENGTH)
+    colour = models.ForeignKey(Colours, models.PROTECT, null=True)
     last_update = models.DateTimeField(auto_now=True)
 
     width = models.DecimalField(
@@ -79,29 +77,26 @@ class DiscountCodes(models.Model):
 class Tax(models.Model):
     tax_id = models.CharField(
         primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
+    name = models.CharField(max_length=MAX_LENGTH, default="Tax")
     country = models.CharField(max_length=MAX_LENGTH)
     state = models.CharField(max_length=MAX_LENGTH)
 
-    country_tax_pct = models.DecimalField(
-        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-
-    state_tax_pct = models.DecimalField(
+    tax_pct = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
 
 
-class UserAddress(models.Model):
+class Address(models.Model):
     address_id = models.CharField(
         primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
-    user = models.ForeignKey(User, models.CASCADE)
-    address = models.CharField(max_length=MAX_LENGTH)
+    user = models.ForeignKey(User, models.CASCADE, related_name='addresses')
+    street_number = models.PositiveSmallIntegerField(default=None)
+    apt_number = models.PositiveSmallIntegerField(blank=True, null=True)
+    street_name = models.CharField(max_length=MAX_LENGTH)
     city = models.CharField(max_length=MAX_LENGTH)
     state_province = models.CharField(max_length=MAX_LENGTH)
     country = models.CharField(max_length=MAX_LENGTH)
-    zip_postal_code = models.CharField(max_length=MAX_LENGTH)
-    phone = models.CharField(max_length=MAX_LENGTH)
-    is_billing = models.BooleanField()
-    is_shipping = models.BooleanField()
-    tax = models.ForeignKey(Tax, models.PROTECT, default=None)
+    zip_postal_code = models.CharField(max_length=MAX_POSTAL)
+    tax = models.ForeignKey(Tax, models.PROTECT, default=None, blank=True, null=True)
 
 
 class ShoppingCart(models.Model):
@@ -136,6 +131,12 @@ class Order(models.Model):
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
     user = models.ForeignKey(User, models.PROTECT)
+    phone = models.CharField(max_length=MAX_PHONE, default=None)
+    shipping_address = models.ForeignKey(
+        Address, models.PROTECT, related_name='shipping', default=None)
+    billing_address = models.ForeignKey(
+        Address, models.PROTECT, related_name='billing', default=None)
+    tax = models.ForeignKey(Tax, models.PROTECT, default=None)
 
     class Meta:
         permissions = [
@@ -149,4 +150,4 @@ class OrderItem(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.PROTECT, related_name='orderitems')
     quantity = models.PositiveSmallIntegerField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
