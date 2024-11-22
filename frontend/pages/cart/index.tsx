@@ -36,6 +36,16 @@ export default function Cart() {
     if (quantity < 1) return;
 
     try {
+      const payload: CartPatch = { quantity: quantity };
+      await fetch(`/api/cart?cartId=${cartId}&id=${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
       setItems((prev) => {
         const updated = [...prev];
         let newSubtotal = subtotal - updated[index].total;
@@ -45,16 +55,6 @@ export default function Cart() {
         newSubtotal += updated[index].total;
         setSubtotal(newSubtotal);
         return updated;
-      });
-
-      const payload: CartPatch = { quantity: quantity };
-      await fetch(`/api/cart?cartId=${cartId}&id=${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `JWT ${token}`,
-        },
-        body: JSON.stringify(payload),
       });
     } catch (error) {
       console.log(`Error: ${error}`);
