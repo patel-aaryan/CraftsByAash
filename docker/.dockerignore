@@ -1,0 +1,47 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments (if any)
+venv/
+env/
+.Python
+
+# Ignore Pipenv and Virtualenv artifacts
+*.venv
+*.env
+Pipfile.lock
+
+# Ignore local environment files
+*.env
+*.env.*
+
+# Ignore log files
+*.log
+
+# Ignore SQLite database files (if applicable)
+*.sqlite3
+
+# Ignore Django migrations (compiled migration files)
+**/migrations/*.pyc
+**/migrations/*.pyo
+**/migrations/*.log
+
+# Ignore static and media files (if generated locally)
+staticfiles/
+media/
+
+# Ignore IDE/editor-specific files
+.vscode/
+.idea/
+
+# Ignore Docker-related files
+docker-compose.yml
+.dockerignore
+
+# Ignore Git and other VCS directories
+.git/
+.hg/
+.svn/
