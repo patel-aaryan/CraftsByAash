@@ -20,7 +20,7 @@ export default function Home() {
     if (token) {
       const fetchUser = async () => {
         try {
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`;
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/store/users/me/`;
           const headers = { Authorization: `JWT ${token}` };
           const response = await axios.get<UserMe>(url, { headers });
           const user: UserMe = response.data;
@@ -37,6 +37,7 @@ export default function Home() {
         const getCart = await axios.get<CartResults[]>(url, { headers });
         const cart = getCart.data;
         if (cart.length) setCartId(cart[0].cart_id);
+        else await axios.post(url, {});
       };
 
       fetchUser();

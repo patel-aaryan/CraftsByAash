@@ -1,4 +1,5 @@
 import { Button, TextField } from "@mui/material";
+import Link from "next/link";
 
 interface OrderSummaryProps {
   subtotal: number;
@@ -40,9 +41,11 @@ export default function OrderSummary({ subtotal }: OrderSummaryProps) {
           placeholder="Coupon Code"
           className="w-full mb-4"
         />
-        <Button variant="contained" color="primary" className="w-full">
-          Proceed to Checkout
-        </Button>
+        <Link href="/checkout">
+          <Button variant="contained" color="primary" className="w-full">
+            Proceed to Checkout
+          </Button>
+        </Link>
       </div>
     </div>
   );
