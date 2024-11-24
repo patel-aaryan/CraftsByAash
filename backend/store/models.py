@@ -47,7 +47,7 @@ class Product(models.Model):
     price = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
 
-    category = models.ForeignKey(Category, models.PROTECT, null=True)
+    category = models.ForeignKey(Category, models.PROTECT, blank=True, null=True)
     inventory = models.PositiveIntegerField()
     colour = models.ForeignKey(Colours, models.PROTECT, null=True)
     last_update = models.DateTimeField(auto_now=True)

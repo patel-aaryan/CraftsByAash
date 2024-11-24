@@ -178,7 +178,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class CreateOrderSerializer(serializers.Serializer):
     with transaction.atomic():
         cart_id = serializers.CharField(max_length=ID_LENGTH)
-        phone = serializers.CharField(max_length=MAX_PHONE)
+        phone = serializers.CharField(max_length=MAX_PHONE, required=False)
         shipping_address = serializers.CharField(max_length=ID_LENGTH)
         billing_address = serializers.CharField(max_length=ID_LENGTH)
         tax = serializers.CharField(max_length=ID_LENGTH)
