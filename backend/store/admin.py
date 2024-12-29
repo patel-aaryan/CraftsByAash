@@ -1,8 +1,9 @@
 from django.contrib import admin, messages
 from django.db.models.aggregates import Count
 from django.db.models.query import QuerySet
-from django.utils.html import format_html, urlencode
 from django.urls import reverse
+from django.utils.html import format_html, urlencode
+
 from . import models
 
 
@@ -33,7 +34,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
     def category_name(self, product):
-        if (product.category):
+        if product.category:
             return product.category.name
 
     @admin.display(ordering='inventory')
@@ -75,7 +76,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['user__first_name', 'user__last_name', 'orders']
+    list_display = ['user__first_name', 'user__last_name', 'orders', 'user__is_verified']
     list_per_page = 10
     list_select_related = ['user']
     ordering = ['user__first_name', 'user__last_name']
@@ -110,3 +111,16 @@ class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['user']
     inlines = [OrderItemInline]
     list_display = ['id', 'placed_at', 'user']
+
+
+
+@admin.register(models.Media)
+class MediaAdmin(admin.ModelAdmin):
+    list_display = ['media_id', 'product', 'product_name']
+    search_fields = ['media_id', 'product__name']
+    list_filter = ['product__name']
+    ordering = ['product__name']
+
+    def product_name(self, media):
+        if media.product:
+            return media.product.name

@@ -10,8 +10,14 @@ async function refreshToken(token: string) {
       method: "POST",
       body: JSON.stringify({ refresh: token }),
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.detail || "Failed to refresh token");
+  }
+
   const refreshedToken = await res.json();
   refreshedToken.expires = Date.now() + TOKEN_LIFETIME;
 
@@ -39,7 +45,7 @@ const authOptions: NextAuthOptions = {
               username: credentials?.username,
               password: credentials?.password,
             }),
-          }
+          },
         );
         const token = await res.json();
 
@@ -55,17 +61,24 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) token.user = user;
       if (Date.now() >= token.user.expires) {
-        const refreshedToken = await refreshToken(token.user.refresh);
-        token.user.access = refreshedToken.access;
-        token.user.expires = Date.now() + TOKEN_LIFETIME;
+        try {
+          const refreshedToken = await refreshToken(token.user.refresh);
+          token.user.access = refreshedToken.access;
+          token.user.expires = Date.now() + TOKEN_LIFETIME;
+        } catch (error) {
+          console.error(error);
+          token.user = null;
+        }
       }
 
       return token;
     },
     async session({ session, token }) {
-      if (token?.user) {
+      if (token?.user && session.user) {
         session.user.access = token.user.access;
         session.user.refresh = token.user.refresh;
+      } else {
+        session.user = null;
       }
       return session;
     },

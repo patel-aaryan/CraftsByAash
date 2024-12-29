@@ -1,4 +1,4 @@
-import { IconButton, TextField, Button } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -24,12 +24,13 @@ export default function CartSummary({
       <div className="flex items-center">
         <Link href={`/shop/${item.product.product_id}`}>
           <Image
-            src="/image1.jpeg"
+            src="/hero.png"
             alt={item.product.name}
-            className="object-cover w-24 h-24 mr-4"
-            width={80}
-            height={80}
-            priority={true}
+            objectFit="cover"
+            width={96}
+            height={96}
+            priority
+            style={{ marginRight: 16 }}
           />
         </Link>
         <div>
@@ -53,7 +54,7 @@ export default function CartSummary({
               size="small"
               variant="outlined"
               value={item.quantity}
-              className="w-12 text-center"
+              style={{ width: 48, textAlign: "center" }}
             />
             <IconButton
               size="small"
@@ -64,7 +65,7 @@ export default function CartSummary({
             <Button
               startIcon={<DeleteIcon />}
               color="error"
-              className="ml-4"
+              sx={{ ml: 2 }}
               onClick={() => handleDelete(index, item.id)}
             >
               Remove

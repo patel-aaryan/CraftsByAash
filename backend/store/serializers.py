@@ -1,8 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from utils.constants import *
 from . import models as m
-from .constants import *
 
 
 class ColourSerializer(serializers.ModelSerializer):
@@ -11,14 +11,26 @@ class ColourSerializer(serializers.ModelSerializer):
         fields = ['name', 'hex', 'rgba']
 
 
+class MediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = m.Media
+        fields = ['media_id', 'media_type']
+
+
 class ProductSerializer(serializers.ModelSerializer):
     colour = ColourSerializer()
+    media = MediaSerializer(many=True, read_only=True)
+    thumbnail = serializers.SerializerMethodField()
+
+    def get_thumbnail(self, obj):
+        media_list = obj.media.all()
+        return next((item.media_id for item in media_list if item.media_type == 'I'), None)
 
     class Meta:
         model = m.Product
         fields = [
             'product_id', 'name', 'description', 'price', 'colour',
-            'inventory', 'width', 'height', 'photo_id'
+            'inventory', 'width', 'height', 'media', 'thumbnail'
         ]
 
 
@@ -104,8 +116,8 @@ class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Address
         fields = [
-            'address_id', 'street_number', 'street_name', 'label',
-            'apt_number', 'city', 'state_province', 'country', 'zip_postal_code',
+            'address_id', 'street_number', 'street_name', 'label', 'tax', 'apt_number',
+            'full_name', 'city', 'state_province', 'country', 'zip_postal_code',
         ]
 
 
@@ -113,7 +125,7 @@ class SimpleUserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Address
         fields = [
-            'street_number', 'street_name', 'apt_number',
+            'street_number', 'street_name', 'apt_number', 'full_name',
             'city', 'state_province', 'country', 'zip_postal_code',
         ]
 
@@ -121,16 +133,16 @@ class SimpleUserAddressSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    is_verified = serializers.BooleanField(source='user.is_verified', read_only=True)
     first_name = serializers.CharField(
         source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
-
     addresses = UserAddressSerializer(many=True, read_only=True)
 
     class Meta:
         model = m.User
         fields = [
-            'username', 'email',
+            'username', 'email', 'is_verified',
             'first_name', 'last_name', 'phone', 'addresses'
         ]
 
@@ -161,11 +173,12 @@ class OrderSerializer(serializers.ModelSerializer):
     tax = serializers.SerializerMethodField()
 
     def get_total(self, order: m.Order):
+        taxApplied = order.tax.tax_pct + 1 if order.tax else 1
         return sum([item.quantity * item.product.price
-                    for item in order.items.all()]) * (order.tax.tax_pct + 1)
+                    for item in order.items.all()]) * taxApplied
 
     def get_tax(self, order: m.Order):
-        return order.tax.tax_pct
+        return order.tax.tax_pct if order.tax else 0
 
     class Meta:
         model = m.Order
@@ -181,7 +194,7 @@ class CreateOrderSerializer(serializers.Serializer):
         phone = serializers.CharField(max_length=MAX_PHONE, required=False)
         shipping_address = serializers.CharField(max_length=ID_LENGTH)
         billing_address = serializers.CharField(max_length=ID_LENGTH)
-        tax = serializers.CharField(max_length=ID_LENGTH)
+        tax = serializers.CharField(max_length=ID_LENGTH, required=False)
 
         def validate_cart_id(self, cart_id):
             if not m.ShoppingCart.objects.filter(pk=cart_id).exists():
@@ -215,15 +228,15 @@ class CreateOrderSerializer(serializers.Serializer):
 
         def save(self, **kwargs):
             cart_id = self.validated_data['cart_id']
-            phone = self.validated_data['phone']
+            phone = self.validated_data.get('phone', None)
             shipping_id = self.validated_data['shipping_address']
             billing_id = self.validated_data['billing_address']
-            tax_id = self.validated_data['tax']
+            tax_id = self.validated_data.get('tax', None)
 
             user_id = m.User.objects.get(user_id=self.context['user_id'])
             shipping_address = m.Address.objects.get(address_id=shipping_id)
             billing_address = m.Address.objects.get(address_id=billing_id)
-            tax = m.Tax.objects.get(tax_id=tax_id)
+            tax = m.Tax.objects.get(tax_id=tax_id) if tax_id else None
 
             order = m.Order.objects.create(
                 user=user_id,

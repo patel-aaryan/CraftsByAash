@@ -1,63 +1,29 @@
-import Link from "next/link";
-import { Button } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import axios from "axios";
-import { CartResults } from "@/types/responses/cartResponses";
-import { UserMe } from "@/types/responses/userResponses";
-import { useCart } from "@/context/cartContext";
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { Carousel, Hero, MasonryGrid } from "@/components/home";
+
+const BEST_CREATIONS = "Our Best Creations, Just For You";
+const ARTWORK_IN_ACTION = "See Our Artwork in Action";
 
 export default function Home() {
-  const { data: session } = useSession();
-  const token = session?.user.access;
-
-  const { setCartId } = useCart();
-
-  const [first, setFirst] = useState("New");
-  const [last, setLast] = useState("User");
-
-  useEffect(() => {
-    if (token) {
-      const fetchUser = async () => {
-        try {
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/store/users/me/`;
-          const headers = { Authorization: `JWT ${token}` };
-          const response = await axios.get<UserMe>(url, { headers });
-          const user: UserMe = response.data;
-          setFirst(user.first_name);
-          setLast(user.last_name);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      const fetchCart = async () => {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/store/carts/`;
-        const headers = { Authorization: `JWT ${token}` };
-        const getCart = await axios.get<CartResults[]>(url, { headers });
-        const cart = getCart.data;
-        if (cart.length) setCartId(cart[0].cart_id);
-        else await axios.post(url, {});
-      };
-
-      fetchUser();
-      fetchCart();
-    }
-  }, [setCartId, token]);
-
+  const items = [
+    { label: BEST_CREATIONS, component: <Carousel /> },
+    { label: ARTWORK_IN_ACTION, component: <MasonryGrid /> },
+  ];
   return (
-    <div>
-      Welcome, {first} {last}
-      <Link href="/login">
-        <Button className="mx-2 rounded-full" variant="contained">
-          Log in
-        </Button>
-      </Link>
-      <Link href="/register">
-        <Button className="mx-2 rounded-full" variant="contained">
-          Register
-        </Button>
-      </Link>
-    </div>
+    <>
+      <Hero />
+
+      <Box px={8} py={2}>
+        {items.map((item, index) => (
+          <Box key={index}>
+            <Typography variant="h4" py={2}>
+              {item.label}
+            </Typography>
+            {item.component}
+          </Box>
+        ))}
+      </Box>
+    </>
   );
 }

@@ -1,26 +1,40 @@
-import ProductCard from "@/components/productCard";
+import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 import { Product, ProductResults } from "@/types/responses/productResponse";
+import { Box, CircularProgress, Grid2 } from "@mui/material";
+import featureFlags from "@/utils/featureFlags";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    (async () => {
       const response = await fetch("/api/products");
       const data: ProductResults = await response.json();
       setProducts(data.results);
-    };
-    fetchProducts();
+      setLoading(true);
+    })();
   }, []);
 
+  if (!featureFlags.shop) return <ComingSoon />;
+
   return (
-    <div className="container mx-auto">
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
-        {products.map((product, index) => (
-          <ProductCard key={index} product={product} />
-        ))}
-      </div>
-    </div>
+    <Box px={8} py={10}>
+      {loading ? (
+        <Grid2 container spacing={2} justifyContent={"center"}>
+          {products.map((product, index) => (
+            <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={index}>
+              <ProductCard product={product} />
+            </Grid2>
+          ))}
+        </Grid2>
+      ) : (
+        <Box display="flex" justifyContent="center" alignItems="center" my={8}>
+          <CircularProgress size={60} />
+        </Box>
+      )}
+    </Box>
   );
 }

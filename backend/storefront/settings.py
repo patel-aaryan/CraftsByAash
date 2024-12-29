@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django_filters',
     'store',
     'core',
-    'corsheaders'
+    'corsheaders' # dev
 ]
 
 MIDDLEWARE = [
@@ -149,16 +149,32 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
         'current_user': 'core.serializers.UserSerializer'
-    }
+    },
+    'EMAIL_FRONTEND_DOMAIN': env('DOMAIN_NAME'),
+    'EMAIL_FRONTEND_SITE_NAME': 'CraftsByAash',
+    'PASSWORD_RESET_CONFIRM_URL' : 'reset/confirm/?uid={uid}&token={token}'
 }
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': 'JWT',
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
 }
 
 AUTH_USER_MODEL = 'core.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('FROM_EMAIL')
+EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
+
+
+SENDGRID_API_KEY = env('SENDGRID_API_KEY')
+DEFAULT_FROM_EMAIL = env('FROM_EMAIL')
+FRONTEND_URL = env('FRONTEND_URL')

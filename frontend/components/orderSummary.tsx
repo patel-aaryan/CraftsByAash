@@ -1,52 +1,80 @@
-import { Button, TextField } from "@mui/material";
 import Link from "next/link";
+import { Box, Button, Divider, Typography } from "@mui/material";
+import { useState } from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-interface OrderSummaryProps {
+interface Props {
   subtotal: number;
+  taxes: number;
+  isDisabled: boolean;
 }
 
-export default function OrderSummary({ subtotal }: OrderSummaryProps) {
+export default function OrderSummary({ subtotal, taxes, isDisabled }: Props) {
+  const [loading, setLoading] = useState(false);
+  const handleClick = () => setLoading(true);
+
   return (
-    <div className="w-1/4 h-3/4 bg-white p-6 rounded-lg shadow-lg">
-      <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+    <>
+      <Typography variant="h6" fontWeight="bold" mb={2}>
+        Order Summary
+      </Typography>
 
       {/* Price, Discount, Shipping */}
-      <div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-600">Price</p>
-          <p className="font-bold">{subtotal.toFixed(2)}</p>
-        </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-600">Discount</p>
-          <p className="font-bold">-$31.90</p>
-          {/* Placeholder value for discount */}
-        </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-600">Coupon Applied</p>
-          <p className="font-bold">$0.00</p>
-        </div>
-      </div>
+      <Box>
+        <Box display="flex" justifyContent="space-between" mb={1}>
+          <Typography color="text.secondary">Subtotal</Typography>
+          <Typography fontWeight="bold">${subtotal.toFixed(2)}</Typography>
+        </Box>
 
-      <hr className="my-4" />
-      <div className="flex justify-between mb-4">
-        <p className="text-lg font-bold">TOTAL</p>
-        <p className="text-lg font-bold">{subtotal.toFixed(2)}</p>
-        {/* Adjust this calculation as necessary */}
-      </div>
+        {/* <Box display="flex" justifyContent="space-between" mb={1}>
+          <Typography color="text.secondary">Order Discounts</Typography>
+          <Typography fontWeight="bold">${subtotal.toFixed(2)}</Typography>
+        </Box> */}
 
-      <div className="space-y-2">
-        <TextField
+        <Box display="flex" justifyContent="space-between" mb={1}>
+          <Typography color="text.secondary">Estimated Taxes</Typography>
+          <Typography fontWeight="bold">${taxes.toFixed(2)}</Typography>
+        </Box>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Total */}
+      <Box display="flex" justifyContent="space-between" mb={1}>
+        <Typography variant="subtitle1" fontWeight="bold">
+          TOTAL
+        </Typography>
+        <Typography variant="subtitle1" fontWeight="bold">
+          ${(subtotal + taxes).toFixed(2)}
+        </Typography>
+      </Box>
+
+      {/* Coupon and Checkout */}
+      <Box display="flex" flexDirection="column" gap={2}>
+        {/* <TextField
           size="small"
           variant="outlined"
           placeholder="Coupon Code"
-          className="w-full mb-4"
-        />
-        <Link href="/checkout">
-          <Button variant="contained" color="primary" className="w-full">
+          fullWidth
+        /> */}
+        {!isDisabled ? (
+          <Link href="/checkout" passHref>
+            <LoadingButton
+              loading={loading}
+              onClick={handleClick}
+              variant="contained"
+              color="primary"
+              fullWidth
+            >
+              Proceed to Checkout
+            </LoadingButton>
+          </Link>
+        ) : (
+          <Button variant="contained" color="primary" fullWidth disabled>
             Proceed to Checkout
           </Button>
-        </Link>
-      </div>
-    </div>
+        )}
+      </Box>
+    </>
   );
 }

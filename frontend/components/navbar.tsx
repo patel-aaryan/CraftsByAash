@@ -1,41 +1,85 @@
-import React from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useRouter } from "next/router";
 import Link from "next/link";
+import { ShoppingCart } from "@mui/icons-material";
+import {
+  AppBar,
+  Box,
+  IconButton,
+  ListItem,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import AccountMenu from "@/components/AccountMenu";
+import MobileMenu from "@/components/MobileMenu";
+import { COMPANY } from "@/utils/constants";
+import featureFlags from "@/utils/featureFlags";
 
-const NavBar = () => {
+export default function NavBar() {
+  const router = useRouter();
+  const { pathname } = router;
+  const ALL_TABS = ["shop", "about", "contact"];
+  const TABS = ALL_TABS.filter((tab) => tab !== "shop" || featureFlags.shop);
+
+  const styles = "transition duration-200";
+  const getHoverStyle = (item = "") => {
+    return pathname === `/${item}` ? "" : "hover:text-gray-300";
+  };
+
   return (
-    <nav className="bg-blue-500 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* logo */}
-        <div className="text-white text-xl font-bold">
-          <Link href="/">CraftsByAash</Link>
-        </div>
-
-        <ul className="hidden md:flex md:space-x-8 text-white uppercase text-sm font-semibold">
-          <li>
-            <Link href="/shop">SHOP</Link>
-          </li>
-          <li>
-            <Link href="/about">ABOUT US</Link>
-          </li>
-          <li>
-            <Link href="/contact">CONTACT</Link>
-          </li>
-        </ul>
-
-        <div className="flex items-center space-x-4 text-white">
-          <MenuIcon />
-          <SearchIcon />
-          <div className="border-r border-white h-6"></div>
-          <Link href="/cart">
-            <ShoppingCartIcon />
+    // bg-blue-500
+    <AppBar position="fixed" sx={{ bgcolor: "#3B82F6" }}>
+      <Toolbar
+        sx={{
+          minWidth: "90%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mx: "auto",
+        }}
+      >
+        <Box display="flex">
+          <Link href="/">
+            <div className={`${styles} ${getHoverStyle()}`}>
+              <Typography variant="h6" fontWeight={700}>
+                {COMPANY}
+              </Typography>
+            </div>
           </Link>
-        </div>
-      </div>
-    </nav>
-  );
-};
+        </Box>
 
-export default NavBar;
+        <div className="hidden md:flex">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            gap={6}
+            fontWeight={600}
+          >
+            {TABS.map((item, index) => (
+              <Link href={`/${item}`} key={index}>
+                <div className={`${styles} text-sm ${getHoverStyle(item)}`}>
+                  <ListItem disableGutters sx={{ listStyle: "none" }}>
+                    {item.toUpperCase()}
+                  </ListItem>
+                </div>
+              </Link>
+            ))}
+          </Box>
+        </div>
+
+        <Box display="flex" alignItems="center" gap={2}>
+          <MobileMenu />
+
+          {featureFlags.cart && (
+            <IconButton color="inherit" aria-label="cart">
+              <Link href="/cart">
+                <ShoppingCart />
+              </Link>
+            </IconButton>
+          )}
+
+          {featureFlags.settings && <AccountMenu />}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}

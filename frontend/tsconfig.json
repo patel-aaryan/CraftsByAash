@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "ES2015"],
+    "target": "ES2015",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,6 +17,11 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/shop/[product_id]/[cartId]/index"
+  ],
   "exclude": ["node_modules"]
 }

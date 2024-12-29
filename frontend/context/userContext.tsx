@@ -1,57 +1,57 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-  FC,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { UserMeData } from "@/types/responses/userResponses";
 
-type UserContextType = {
-  user: { id: string; username: string; email: string } | null;
-  setUser: (
-    user: { id: string; username: string; email: string } | null
-  ) => void;
-};
+interface UserContextType {
+  firstName: string;
+  lastName: string;
+  cartId: string;
+  email: string;
+}
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{
-    id: string;
-    username: string;
-    email: string;
-  } | null>(null);
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { data: session } = useSession();
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [cartId, setCartId] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (session?.user?.access) {
+      (async () => {
+        try {
+          const response = await fetch("/api/user/", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `JWT ${session.user?.access}`,
+            },
+          });
+          const data: UserMeData = await response.json();
+          setFirstName(data.first_name);
+          setLastName(data.last_name);
+          setEmail(data.email);
+          if (data.cart_id) setCartId(data.cart_id);
+        } catch (error) {
+          console.error("Failed to fetch user data", error);
+        }
+      })();
     }
-  }, []);
-
-  const updateUser = (
-    user: { id: string; username: string; email: string } | null
-  ) => {
-    setUser(user);
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  };
+  }, [session?.user?.access]);
 
   return (
-    <UserContext.Provider value={{ user, setUser: updateUser }}>
+    <UserContext.Provider value={{ firstName, lastName, cartId, email }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export function useUser() {
+export const useUser = () => {
   const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
+  if (!context) throw new Error("useUser must be used within a UserProvider");
   return context;
-}
+};

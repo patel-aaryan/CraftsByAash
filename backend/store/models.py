@@ -1,19 +1,17 @@
-from uuid import uuid4
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .constants import *
-
-
-def generate_uuid():
-    return str(uuid4())
+from utils.constants import *
+from utils.helpers import generate_uuid
 
 
 class User(models.Model):
     phone = models.CharField(max_length=MAX_PHONE)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, models.CASCADE, related_name='profile')
+
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -58,7 +56,20 @@ class Product(models.Model):
     height = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
 
-    photo_id = models.PositiveIntegerField(default=None, blank=True)
+
+class Media(models.Model):
+    MEDIA_TYPE_IMAGE = 'I'
+    MEDIA_TYPE_VIDEO = 'V'
+    MEDIA_TYPE_CHOICES = [
+        (MEDIA_TYPE_IMAGE, 'Image'),
+        (MEDIA_TYPE_VIDEO, 'Video'),
+    ]
+    media_id = models.CharField(
+        primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
+    media_type = models.CharField(
+        max_length=1, choices=MEDIA_TYPE_CHOICES, default=MEDIA_TYPE_IMAGE)
+    product = models.ForeignKey(
+        Product, models.PROTECT, null=True, related_name='media')
 
 
 class DiscountCodes(models.Model):
@@ -89,6 +100,7 @@ class Address(models.Model):
     address_id = models.CharField(
         primary_key=True, max_length=ID_LENGTH, default=generate_uuid)
     user = models.ForeignKey(User, models.CASCADE, related_name='addresses')
+    full_name = models.CharField(blank=True, max_length=MAX_LENGTH)
     street_number = models.PositiveSmallIntegerField(default=None)
     apt_number = models.PositiveSmallIntegerField(blank=True, null=True)
     street_name = models.CharField(max_length=MAX_LENGTH)
@@ -131,12 +143,12 @@ class Order(models.Model):
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
     user = models.ForeignKey(User, models.PROTECT)
-    phone = models.CharField(max_length=MAX_PHONE, default=None)
+    phone = models.CharField(max_length=MAX_PHONE, blank=True, null=True, default=None)
     shipping_address = models.ForeignKey(
         Address, models.PROTECT, related_name='shipping', default=None)
     billing_address = models.ForeignKey(
         Address, models.PROTECT, related_name='billing', default=None)
-    tax = models.ForeignKey(Tax, models.PROTECT, default=None)
+    tax = models.ForeignKey(Tax, models.PROTECT, blank=True, null=True, default=None)
 
     class Meta:
         permissions = [

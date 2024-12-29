@@ -6,7 +6,7 @@ declare module "next-auth" {
     user: {
       access: string;
       refresh: string;
-    };
+    } | null;
   }
 }
 

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { CartPost } from "@/types/payloads/cartPayload";
 import { Product } from "@/types/responses/productResponse";
-import { useCart } from "@/context/cartContext";
 import { useSession } from "next-auth/react";
+import { useUser } from "@/context/userContext";
 
 interface ProductCardProps {
   product: Product;
@@ -18,13 +18,13 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { data: session } = useSession();
-  const token = session?.user.access;
-  const { cartId } = useCart();
+  const token = session?.user?.access;
+  const { cartId } = useUser();
 
   const [isAdded, setIsAdded] = useState(false);
-  if (!product) {
-    return <div>Loading...</div>;
-  }
+
+  if (!product) return <div>Loading...</div>;
+
   const addToCart = async (id: string) => {
     if (cartId) {
       try {
@@ -55,25 +55,21 @@ export default function ProductCard({ product }: ProductCardProps) {
   const buttonColor: "success" | "primary" = isAdded ? "success" : "primary";
 
   return (
-    <Card sx={{ borderRadius: "24px" }} className="mx-auto shadow-lg p-6">
+    <Card sx={{ borderRadius: "24px", mx: "auto", width: 256, p: 3 }}>
       <Link href={`/shop/${product.product_id}`}>
         <CardMedia
           component="img"
           sx={{ height: 200, objectFit: "contain" }}
-          image="/product.png"
+          image={`/products/${product.thumbnail}.jpg`}
           alt={product.name}
         />
       </Link>
       <CardContent>
         <Link href={`/shop/${product.product_id}`}>
-          <Typography
-            variant="h5"
-            component="div"
-            className="hover:text-blue-600"
-          >
-            {product.name}
-          </Typography>
-          <Typography variant="h6" component="div" className="my-2">
+          <div className="hover:text-blue-600">
+            <Typography variant="h5">{product.name}</Typography>
+          </div>
+          <Typography variant="h6" sx={{ my: 1 }}>
             ${product.price}
           </Typography>
         </Link>
@@ -81,10 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           sx={{
             borderRadius: "32px",
             bgcolor: isAdded ? "success.main" : "primary.main",
-            "&.Mui-disabled": {
-              bgcolor: "success.main",
-              color: "white",
-            },
+            "&.Mui-disabled": { bgcolor: "success.main", color: "white" },
           }}
           variant="contained"
           color={buttonColor}

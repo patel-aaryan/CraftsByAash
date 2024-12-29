@@ -8,7 +8,13 @@ export interface Product {
   shape: string;
   width: number;
   height: number;
-  photo_id: number;
+  thumbnail: string;
+  media: Media[];
+}
+
+export interface Media {
+  media_id: string;
+  media_type: string;
 }
 
 export interface ProductResults {
@@ -16,4 +22,10 @@ export interface ProductResults {
   next: string;
   previous: string;
   results: Product[];
+}
+
+export interface SimpleProduct {
+  name: string;
+  price: number;
+  product_id: string;
 }

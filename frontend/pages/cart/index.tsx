@@ -2,35 +2,48 @@ import { CartItem, CartResults } from "@/types/responses/cartResponses";
 import { useEffect, useState } from "react";
 import { CartPatch } from "@/types/payloads/cartPayload";
 import { useSession } from "next-auth/react";
-import axios from "axios";
-import { useCart } from "@/context/cartContext";
-import OrderSummary from "@/components/orderSummary";
-import CartSummary from "@/components/cartSummary";
+import OrderSummary from "@/components/OrderSummary";
+import CartSummary from "@/components/CartSummary";
+import { useUser } from "@/context/userContext";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import featureFlags from "@/utils/featureFlags";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export default function Cart() {
   const { data: session } = useSession();
-  const token = session?.user.access;
-
-  const { cartId, setCartId } = useCart();
+  const token = session?.user?.access;
+  const { cartId } = useUser();
 
   const [items, setItems] = useState<CartItem[]>([]);
   const [subtotal, setSubtotal] = useState(0);
+  const [taxes, setTaxes] = useState(0);
+  const [cartIsEmpty, setCartIsEmpty] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
       if (token) {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/store/carts/`;
-        const headers = { Authorization: `JWT ${token}` };
-        const getCart = await axios.get<CartResults[]>(url, { headers });
-        const cart = getCart.data;
+        const getCart = await fetch("/api/cart", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `JWT ${token}`,
+          },
+        });
+        const cart: CartResults[] = await getCart.json();
         if (cart.length) {
-          setCartId(cart[0].cart_id);
           setItems(cart[0].items);
           setSubtotal(cart[0].subtotal);
+          setTaxes(cart[0].subtotal * 0.13);
+          setLoading(true);
         }
       }
     })();
-  }, [setCartId, token]);
+  }, [token]);
+
+  useEffect(() => {
+    if (items.length) setCartIsEmpty(false);
+  }, [items]);
 
   const handlePatch = async (index: number, id: number, quantity: number) => {
     if (quantity < 1) return;
@@ -54,6 +67,7 @@ export default function Cart() {
           updated[index].quantity * updated[index].product.price;
         newSubtotal += updated[index].total;
         setSubtotal(newSubtotal);
+        setTaxes(newSubtotal * 0.13);
         return updated;
       });
     } catch (error) {
@@ -76,6 +90,8 @@ export default function Cart() {
           const updated = prev.filter((_, i) => i !== index);
           const newSubtotal = subtotal - prev[index].total;
           setSubtotal(newSubtotal);
+          setTaxes(newSubtotal * 0.13);
+          if (!updated.length) setCartIsEmpty(true);
           return updated;
         });
       } catch (error) {
@@ -84,29 +100,73 @@ export default function Cart() {
     }
   };
 
+  if (!featureFlags.cart) return <ComingSoon />;
+
   return (
-    <div className="flex justify-between p-8">
-      <div className="w-2/3">
-        <h2 className="text-2xl font-bold mb-4">
+    <Box display="flex" justifyContent="space-between" p={4} my={8}>
+      <Box width="66%" bgcolor="white" borderRadius={2} boxShadow={3} p={4}>
+        <Typography variant="h5" fontWeight="bold" mb={2}>
           Cart{" "}
-          <span className="text-gray-500 text-base px-2">
+          <Typography
+            variant="body2"
+            sx={{ color: "gray", display: "inline-block", px: 1 }}
+          >
             {items.length} ITEMS
-          </span>
-        </h2>
+          </Typography>
+        </Typography>
 
-        {items.map((item, index) => (
-          <div key={item.id} className="border-b pb-4 mb-4">
-            <CartSummary
-              item={item}
-              index={index}
-              handlePatch={handlePatch}
-              handleDelete={handleDelete}
-            />
-          </div>
-        ))}
-      </div>
+        {loading ? (
+          items.map((item, index) => (
+            <Box
+              key={item.id}
+              borderBottom="1px solid"
+              borderColor="divider"
+              pb={2}
+              mb={2}
+            >
+              <CartSummary
+                item={item}
+                index={index}
+                handlePatch={handlePatch}
+                handleDelete={handleDelete}
+              />
+            </Box>
+          ))
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            my={8}
+          >
+            <CircularProgress size={60} />
+          </Box>
+        )}
+      </Box>
 
-      <OrderSummary subtotal={subtotal} />
-    </div>
+      {/* Right section for Order Summary */}
+      <Box
+        width="25%"
+        height="100%"
+        bgcolor="white"
+        p={3}
+        borderRadius={2}
+        boxShadow={3}
+        my={2}
+        ml={8}
+      >
+        {loading ? (
+          <OrderSummary
+            subtotal={subtotal}
+            taxes={taxes}
+            isDisabled={cartIsEmpty}
+          />
+        ) : (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }

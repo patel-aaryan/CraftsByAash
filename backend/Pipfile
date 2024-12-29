@@ -13,6 +13,8 @@ django-filter = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
 django-environ = "*"
+sendgrid = "*"
+django-sendgrid-v5 = "*"
 
 [dev-packages]
 
