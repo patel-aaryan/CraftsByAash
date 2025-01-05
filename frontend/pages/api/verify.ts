@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -16,7 +16,7 @@ export default async function handler(
   }
 
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/core/verify-email/`;
+    const url = `${process.env.API_URL}/core/verify/`;
     const response = await axios.get(url, {
       params: { token },
       headers: { "Content-Type": "application/json" },

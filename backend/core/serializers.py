@@ -18,7 +18,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         user.generate_verification_token()
-        send_verification_email(user)
+        send_verification_email(user, 'verify')
         return user
 
 

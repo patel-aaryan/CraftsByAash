@@ -4,14 +4,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 const TOKEN_LIFETIME = 14 * 60 * 1000;
 
 async function refreshToken(token: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/jwt/refresh/`,
-    {
-      method: "POST",
-      body: JSON.stringify({ refresh: token }),
-      headers: { "Content-Type": "application/json" },
-    },
-  );
+  const res = await fetch(`${process.env.API_URL}/auth/jwt/refresh/`, {
+    method: "POST",
+    body: JSON.stringify({ refresh: token }),
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!res.ok) {
     const errorData = await res.json();
@@ -36,17 +33,14 @@ const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/jwt/create/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              username: credentials?.username,
-              password: credentials?.password,
-            }),
-          },
-        );
+        const res = await fetch(`${process.env.API_URL}/auth/jwt/create/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: credentials?.username,
+            password: credentials?.password,
+          }),
+        });
         const token = await res.json();
 
         if (res.ok && token) {

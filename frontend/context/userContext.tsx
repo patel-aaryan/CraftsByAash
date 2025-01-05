@@ -7,6 +7,8 @@ interface UserContextType {
   lastName: string;
   cartId: string;
   email: string;
+  phone: string;
+  is_verified: boolean | null;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -15,10 +17,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { data: session } = useSession();
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [cartId, setCartId] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cartId, setCartId] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [is_verified, setVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (session?.user?.access) {
@@ -35,6 +39,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           setFirstName(data.first_name);
           setLastName(data.last_name);
           setEmail(data.email);
+          setPhone(data.phone);
+          setVerified(data.is_verified);
           if (data.cart_id) setCartId(data.cart_id);
         } catch (error) {
           console.error("Failed to fetch user data", error);
@@ -44,7 +50,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [session?.user?.access]);
 
   return (
-    <UserContext.Provider value={{ firstName, lastName, cartId, email }}>
+    <UserContext.Provider
+      value={{ firstName, lastName, cartId, email, phone, is_verified }}
+    >
       {children}
     </UserContext.Provider>
   );

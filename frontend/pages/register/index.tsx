@@ -1,4 +1,4 @@
-import AuthCard from "@/components/AuthCard";
+import CenterCard from "@/components/CenterCard";
 import { RegisterForm } from "@/components/auth";
 import { Footer } from "@/types/forms";
 import { ComingSoon } from "@/components/ComingSoon";
@@ -16,8 +16,8 @@ export default function Register() {
   if (!featureFlags.auth) return <ComingSoon />;
 
   return (
-    <AuthCard footer={footer}>
+    <CenterCard footer={footer}>
       <RegisterForm />
-    </AuthCard>
+    </CenterCard>
   );
 }

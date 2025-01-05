@@ -8,7 +8,7 @@ interface Props {
   footer?: Footer[];
 }
 
-const AuthCard: FC<Props> = ({
+const CenterCard: FC<Props> = ({
   children,
 
   footer,
@@ -62,4 +62,4 @@ const AuthCard: FC<Props> = ({
   );
 };
 
-export default AuthCard;
+export default CenterCard;

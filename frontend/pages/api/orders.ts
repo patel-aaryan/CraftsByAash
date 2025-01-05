@@ -1,18 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import sgMail from "@sendgrid/mail";
-import { OrderCreate } from "@/types/responses/orderResponses";
+import { Order } from "@/types/responses/orderResponses";
 import { COMPANY } from "@/utils/constants";
 
 const sendGridApiKey = process.env.SENDGRID_API_KEY;
 if (!sendGridApiKey) throw new Error("SENDGRID_API_KEY is not defined");
 sgMail.setApiKey(sendGridApiKey);
-async function sendOrderConfirmation(order: OrderCreate, email: string) {
-  if (!process.env.EMAIL) return;
+async function sendOrderConfirmation(order: Order, email: string) {
+  if (!process.env.NEXT_PUBLIC_EMAIL) return;
 
   const msg = {
     to: email,
-    from: process.env.EMAIL,
+    from: process.env.NEXT_PUBLIC_EMAIL,
     subject: `Order Confirmation - ${COMPANY}`,
     html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -76,7 +76,7 @@ async function sendOrderConfirmation(order: OrderCreate, email: string) {
 
       <footer style="margin-top: 30px; font-size: 0.9em; color: #777;">
         <p>If you have any questions about your order, please contact us at 
-          <a href="mailto:${process.env.EMAIL}">${process.env.EMAIL}</a>.
+          <a href="mailto:${process.env.NEXT_PUBLIC_EMAIL}">${process.env.NEXT_PUBLIC_EMAIL}</a>.
         </p>
       </footer>
     </div>
@@ -90,20 +90,24 @@ async function sendOrderConfirmation(order: OrderCreate, email: string) {
   }
 }
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/store/orders/`;
+const url = `${process.env.API_URL}/store/orders/`;
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { email } = req.query;
-  if (!email || typeof email !== "string") {
-    return res.status(400).json({ error: "Valid email is required" });
-  }
-
   const headers = { Authorization: req.headers.authorization };
-  const response = await axios.post<OrderCreate>(url, req.body, { headers });
-  const order: OrderCreate = response.data;
 
-  await sendOrderConfirmation(order, email);
-  return res.status(200).json(order);
+  if (req.method === "POST") {
+    const { email } = req.query;
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({ error: "Valid email is required" });
+    }
+
+    const response = await axios.post<Order>(url, req.body, { headers });
+    const order: Order = response.data;
+
+    await sendOrderConfirmation(order, email);
+    return res.status(200).json(order);
+  } else if (req.method === "GET") {
+  }
 }

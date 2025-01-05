@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Box, Divider, IconButton, Typography } from "@mui/material";
 import {
   Email,
@@ -7,10 +8,12 @@ import {
   Phone,
   Twitter,
 } from "@mui/icons-material";
-import Link from "next/link";
-import { EMAIL, ETSY, PHONE } from "@/utils/constants";
 
 export default function Footer() {
+  const EMAIL = process.env.NEXT_PUBLIC_EMAIL || "someone@example.com";
+  const PHONE = process.env.NEXT_PUBLIC_PHONE || "+1 (123) 456-7890";
+  const ETSY = process.env.NEXT_PUBLIC_ETSY || "https://www.etsy.com/";
+
   const contacts = [
     { icon: <Email sx={{ mx: 1 }} />, link: `mailto:${EMAIL}`, text: EMAIL },
     { icon: <Phone sx={{ mx: 1 }} />, link: `tel:${PHONE}`, text: PHONE },

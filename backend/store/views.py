@@ -9,7 +9,7 @@ from . import serializers as ser
 from .filters import ProductFilter
 from .models import CartItem, Order, Product, ShoppingCart, User, Address
 from .pagination import ProductPagination
-from .permissions import IsAdminOrReadOnly, IsVerified
+from .permissions import IsAdminOrReadOnly
 
 
 class ProductViewSet(ModelViewSet):
@@ -29,7 +29,7 @@ class ProductViewSet(ModelViewSet):
 class ShoppingCartViewSet(ModelViewSet):
     queryset = ShoppingCart.objects.prefetch_related('items__product').all()
     serializer_class = ser.ShoppingCartSerializer
-    permission_classes = [IsVerified]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user

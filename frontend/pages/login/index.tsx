@@ -1,8 +1,8 @@
-import AuthCard from "@/components/AuthCard";
+import CenterCard from "@/components/CenterCard";
 import { LoginForm } from "@/components/auth";
 import { Footer } from "@/types/forms";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function Login() {
   const footer: Footer[] = [
@@ -21,8 +21,8 @@ export default function Login() {
   if (!featureFlags.auth) return <ComingSoon />;
 
   return (
-    <AuthCard footer={footer}>
+    <CenterCard footer={footer}>
       <LoginForm />
-    </AuthCard>
+    </CenterCard>
   );
 }

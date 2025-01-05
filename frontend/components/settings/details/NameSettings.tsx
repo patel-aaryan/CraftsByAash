@@ -9,8 +9,12 @@ import {
   validateRequired,
 } from "@/utils/forms";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useSession } from "next-auth/react";
 
-export function Details() {
+export function NameSettings() {
+  const { data: session } = useSession();
+  const token = session?.user?.access;
+
   const { firstName, lastName } = useUser();
 
   const [newFirstName, setNewFirstName] = useState<Field>(
@@ -65,27 +69,29 @@ export function Details() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(newFirstName.value, newLastName.value);
-    if (isFormValid) {
-      setLoading(true);
-      try {
-        const payload = {
-          first_name: newFirstName.value,
-          last_name: newLastName.value,
-        };
+    if (!isFormValid) return;
 
-        await fetch(`/api/settings/name`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-      window.location.reload();
+    setLoading(true);
+    try {
+      const payload = {
+        first_name: newFirstName.value,
+        last_name: newLastName.value,
+      };
+
+      await fetch(`/api/settings/name`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+    window.location.reload();
   };
 
   return (

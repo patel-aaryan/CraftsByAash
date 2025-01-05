@@ -1,7 +1,7 @@
 import { AddressDetails } from "../forms";
 import { SimpleProduct } from "./productResponse";
 
-export interface OrderCreate {
+export interface Order {
   id: number;
   user: number;
   placed_at: Date;

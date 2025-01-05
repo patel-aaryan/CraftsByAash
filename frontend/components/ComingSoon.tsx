@@ -1,14 +1,14 @@
 import React from "react";
 import { useRouter } from "next/router";
-import AuthCard from "@/components/AuthCard";
+import CenterCard from "@/components/CenterCard";
 import { Box, Button, Typography } from "@mui/material";
 
-export function ComingSoon() {
+export default function ComingSoon() {
   const router = useRouter();
   const goBack = () => router.push("/");
 
   return (
-    <AuthCard>
+    <CenterCard>
       <Typography variant="h4" align="center" gutterBottom>
         Exciting News Ahead!
       </Typography>
@@ -29,6 +29,6 @@ export function ComingSoon() {
       >
         <Typography align="center">Return to Home</Typography>
       </Button>
-    </AuthCard>
+    </CenterCard>
   );
 }

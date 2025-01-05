@@ -29,4 +29,5 @@ export interface UserMeData {
   phone: string;
   username: string;
   addresses: UserAddress;
+  is_verified: boolean;
 }

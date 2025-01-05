@@ -79,27 +79,28 @@ export function Password() {
       return;
     }
 
-    if (isFormValid) {
-      setLoading(true);
-      try {
-        const payload = {
-          new_password: newPass.value,
-          current_password: oldPass.value,
-        };
+    if (!isFormValid) return;
 
-        await fetch(`/api/settings/password`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `JWT ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    try {
+      const payload = {
+        new_password: newPass.value,
+        current_password: oldPass.value,
+      };
+      console.log(payload);
+
+      await fetch(`/api/settings/password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 

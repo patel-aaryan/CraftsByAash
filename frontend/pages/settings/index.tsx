@@ -1,17 +1,23 @@
-import { SyntheticEvent, useEffect, useState } from "react";
-import { Avatar, Box, Tab, Tabs, Typography } from "@mui/material";
-import Sidebar from "@/components/Sidebar";
-import { Addresses, Details, Password } from "@/components/settings";
-import { useUser } from "@/context/userContext";
 import { useSession } from "next-auth/react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
+import { Addresses, Details, Password, Sidebar } from "@/components/settings";
+import { Avatar, Box, Tab, Tabs, Typography } from "@mui/material";
+import { useUser } from "@/context/userContext";
 import { UserAddress } from "@/types/responses/userResponses";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
+import Unverified from "@/components/Unverified";
+import { IconTab } from "@/types/settings";
+import { OrderHistory } from "@/components/order/OrderHistory";
 
-export default function Settings() {
+export default function Account() {
   const { data: session } = useSession();
   const token = session?.user?.access;
-  const { firstName, lastName } = useUser();
+  const { firstName, lastName, is_verified } = useUser();
+
+  const [sideTab, setSideTab] = useState<"settings" | "history">("settings");
+  const [settings, setSettings] = useState<IconTab>({ color: "primary" });
+  const [history, setHistory] = useState<IconTab>({ color: "inherit" });
 
   const tabs = ["My Details", "Addresses", "Password"];
   const [tab, setTab] = useState(0);
@@ -19,21 +25,34 @@ export default function Settings() {
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [refreshAddresses, setRefreshAddresses] = useState(0);
   const handleRefresh = () => setRefreshAddresses((prev) => prev + 1);
+
   useEffect(() => {
-    if (token) {
-      (async () => {
-        const response = await fetch("/api/address", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `JWT ${token}`,
-          },
-        });
-        const data: UserAddress[] = await response.json();
-        setAddresses(data);
-      })();
-    }
+    if (!token) return;
+
+    (async () => {
+      const response = await fetch("/api/address", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${token}`,
+        },
+      });
+      const data: UserAddress[] = await response.json();
+      setAddresses(data);
+    })();
   }, [token, refreshAddresses]);
+
+  const handleSideTabChange = (tab: string) => {
+    if (tab === "history") {
+      setSideTab("history");
+      setSettings({ color: "inherit" });
+      setHistory({ color: "primary" });
+    } else {
+      setSideTab("settings");
+      setSettings({ color: "primary" });
+      setHistory({ color: "inherit" });
+    }
+  };
 
   const handleChange = (e: SyntheticEvent, newTab: number) => setTab(newTab);
 
@@ -54,7 +73,12 @@ export default function Settings() {
 
   return (
     <Box display="flex">
-      <Sidebar />
+      <Sidebar
+        settingsProps={settings}
+        orderProps={history}
+        handleChange={handleSideTabChange}
+      />
+      {is_verified === false && <Unverified />}
 
       <Box flexGrow={1} px={8} py={12}>
         <Box
@@ -79,13 +103,18 @@ export default function Settings() {
           </Typography>
         </Box>
 
-        <Tabs value={tab} onChange={handleChange} sx={{ my: "20px" }}>
-          {tabs.map((tab, index) => (
-            <Tab key={index} label={tab} />
-          ))}
-        </Tabs>
-
-        {getTabContent()}
+        {sideTab === "settings" ? (
+          <>
+            <Tabs value={tab} onChange={handleChange} sx={{ my: "20px" }}>
+              {tabs.map((tab, index) => (
+                <Tab key={index} label={tab} />
+              ))}
+            </Tabs>
+            {getTabContent()}
+          </>
+        ) : (
+          <OrderHistory />
+        )}
       </Box>
     </Box>
   );

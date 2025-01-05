@@ -3,11 +3,11 @@ import axios from "axios";
 import { UserMe } from "@/types/responses/userResponses";
 import { CartResults } from "@/types/responses/cartResponses";
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/store`;
+const url = `${process.env.API_URL}/store`;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const headers = { Authorization: req.headers.authorization };
 
@@ -19,7 +19,7 @@ export default async function handler(
     const newCart = await axios.post<CartResults>(
       `${url}/carts/`,
       {},
-      { headers }
+      { headers },
     );
     cartId = newCart.data.cart_id;
   } else {

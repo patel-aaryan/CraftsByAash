@@ -3,10 +3,10 @@ import axios from "axios";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { cartId, id } = req.query as { cartId: string; id: string };
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/store/carts/`;
+  const url = `${process.env.API_URL}/store/carts/`;
   const headers = { Authorization: req.headers.authorization };
 
   let response;

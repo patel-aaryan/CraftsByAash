@@ -22,7 +22,7 @@ export default async function handler(
     const { firstName, lastName, reason, email, phone, message }: RequestBody =
       req.body;
 
-    if (!process.env.EMAIL) {
+    if (!process.env.NEXT_PUBLIC_EMAIL) {
       return res.status(500).json({ error: "Host email doesn't exist" });
     }
 
@@ -30,7 +30,7 @@ export default async function handler(
 
     const msg = {
       to: email,
-      from: process.env.EMAIL,
+      from: process.env.NEXT_PUBLIC_EMAIL,
       subject: `New message from ${firstName} ${lastName} - ${reason}`,
       text: message,
       html: `<p>You have a new help form submission</p>

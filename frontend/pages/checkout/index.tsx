@@ -7,7 +7,7 @@ import ExpandablePanel from "@/components/ExpandablePanel";
 import { CartItem, CartResults } from "@/types/responses/cartResponses";
 import CostBreakdown from "@/components/CostBreakdown";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function Checkout() {
   const { data: session } = useSession();

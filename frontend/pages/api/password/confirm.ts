@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/users/reset_password_confirm/`;
+const url = `${process.env.API_URL}/auth/users/reset_password_confirm/`;
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,7 +9,7 @@ export default async function handler(
 ) {
   let response;
 
-  if (req.method == "POST") {
+  if (req.method === "POST") {
     response = await axios.post(url, req.body);
   } else {
     response = await axios.get(url);

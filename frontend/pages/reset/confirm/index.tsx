@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import featureFlags from "@/utils/featureFlags";
 import { ComingSoon } from "@/components/ComingSoon";
-import AuthCard from "@/components/AuthCard";
+import CenterCard from "@/components/CenterCard";
 import { ConfirmResetForm } from "@/components/auth";
 
 type routerQuery = {
@@ -19,8 +19,8 @@ export default function Confirm() {
   if (!uid || !token) return null;
 
   return (
-    <AuthCard>
+    <CenterCard>
       <ConfirmResetForm uid={uid} passwordToken={token} />
-    </AuthCard>
+    </CenterCard>
   );
 }
