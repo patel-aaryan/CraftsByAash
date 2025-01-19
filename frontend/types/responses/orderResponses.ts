@@ -4,7 +4,7 @@ import { SimpleProduct } from "./productResponse";
 export interface Order {
   id: number;
   user: number;
-  placed_at: Date;
+  placed_at: string;
   payment_status: string;
   total: number;
   tax: number;

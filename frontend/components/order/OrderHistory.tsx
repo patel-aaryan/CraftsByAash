@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Order } from "@/types/responses/orderResponses";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import dayjs from "dayjs";
 
 export function OrderHistory() {
   const { data: session } = useSession();
@@ -50,7 +51,8 @@ export function OrderHistory() {
                 <Grid item xs={12} md={6}>
                   <Typography variant="h6">Order #{order.id}</Typography>
                   <Typography variant="body2">
-                    Placed on: {order.placed_at.toDateString()}
+                    Placed on:{" "}
+                    {dayjs(order.placed_at).format("dddd, MMMM D, YYYY")}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -70,18 +72,19 @@ export function OrderHistory() {
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle1">Shipping Address</Typography>
                   <Typography variant="body2">
-                    {order.shipping_address.street},{" "}
+                    {order.shipping_address.street_name},{" "}
                     {order.shipping_address.city},{" "}
-                    {order.shipping_address.state},{" "}
-                    {order.shipping_address.postal_code}
+                    {order.shipping_address.state_province},{" "}
+                    {order.shipping_address.zip_postal_code}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle1">Billing Address</Typography>
                   <Typography variant="body2">
-                    {order.billing_address.street}, {order.billing_address.city}
-                    , {order.billing_address.state},{" "}
-                    {order.billing_address.postal_code}
+                    {order.billing_address.street_name},{" "}
+                    {order.billing_address.city},{" "}
+                    {order.billing_address.state_province},{" "}
+                    {order.billing_address.zip_postal_code}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -92,7 +95,7 @@ export function OrderHistory() {
                         <ListItemText
                           primary={`${item.product.name} (x${item.quantity})`}
                           secondary={`Price: $${item.price.toFixed(
-                            2,
+                            2
                           )}, Total: $${(item.price * item.quantity).toFixed(2)}`}
                         />
                       </ListItem>

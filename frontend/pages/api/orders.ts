@@ -42,7 +42,7 @@ async function sendOrderConfirmation(order: Order, email: string) {
                 <td style="padding: 8px;">$${item.product.price.toFixed(2)}</td>
                 <td style="padding: 8px;">$${item.price.toFixed(2)}</td>
               </tr>
-            `,
+            `
               )
               .join("")}
           </tbody>
@@ -93,7 +93,7 @@ async function sendOrderConfirmation(order: Order, email: string) {
 const url = `${process.env.API_URL}/store/orders/`;
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   const headers = { Authorization: req.headers.authorization };
 
@@ -104,10 +104,14 @@ export default async function handler(
     }
 
     const response = await axios.post<Order>(url, req.body, { headers });
-    const order: Order = response.data;
+    const order = response.data;
 
     await sendOrderConfirmation(order, email);
     return res.status(200).json(order);
   } else if (req.method === "GET") {
+    const response = await axios.get<Order[]>(url, { headers });
+    const order = response.data;
+
+    return res.status(200).json(order);
   }
 }
