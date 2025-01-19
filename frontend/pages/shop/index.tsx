@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Product, ProductResults } from "@/types/responses/productResponse";
 import { Box, CircularProgress, Grid2 } from "@mui/material";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);

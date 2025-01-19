@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 import CenterCard from "@/components/CenterCard";
 import { ConfirmResetForm } from "@/components/auth";
 

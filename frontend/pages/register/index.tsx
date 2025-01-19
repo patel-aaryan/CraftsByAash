@@ -1,7 +1,7 @@
 import CenterCard from "@/components/CenterCard";
 import { RegisterForm } from "@/components/auth";
 import { Footer } from "@/types/forms";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 import featureFlags from "@/utils/featureFlags";
 
 export default function Register() {

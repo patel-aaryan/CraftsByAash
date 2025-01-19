@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Button, Typography } from "@mui/material";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function VerifyEmail() {
   const router = useRouter();

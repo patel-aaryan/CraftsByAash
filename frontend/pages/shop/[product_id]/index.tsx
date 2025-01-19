@@ -22,7 +22,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useUser } from "@/context/userContext";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function ProductDetail() {
   const { data: session } = useSession();
