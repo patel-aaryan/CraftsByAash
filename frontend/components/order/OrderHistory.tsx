@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -16,28 +15,11 @@ import { Order } from "@/types/responses/orderResponses";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import dayjs from "dayjs";
 
-export function OrderHistory() {
-  const { data: session } = useSession();
-  const token = session?.user?.access;
+interface Props {
+  orders: Order[];
+}
 
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    if (!token) return;
-
-    (async () => {
-      const response = await fetch("/api/orders", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `JWT ${token}`,
-        },
-      });
-      const data: Order[] = await response.json();
-      setOrders(data);
-    })();
-  }, [token]);
-
+export function OrderHistory({ orders }: Props) {
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
@@ -95,7 +77,7 @@ export function OrderHistory() {
                         <ListItemText
                           primary={`${item.product.name} (x${item.quantity})`}
                           secondary={`Price: $${item.price.toFixed(
-                            2
+                            2,
                           )}, Total: $${(item.price * item.quantity).toFixed(2)}`}
                         />
                       </ListItem>

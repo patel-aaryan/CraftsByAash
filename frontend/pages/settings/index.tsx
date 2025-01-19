@@ -9,6 +9,7 @@ import ComingSoon from "@/components/ComingSoon";
 import Unverified from "@/components/Unverified";
 import { IconTab } from "@/types/settings";
 import { OrderHistory } from "@/components/order/OrderHistory";
+import { Order } from "@/types/responses/orderResponses";
 
 export default function Account() {
   const { data: session } = useSession();
@@ -26,6 +27,8 @@ export default function Account() {
   const [refreshAddresses, setRefreshAddresses] = useState(0);
   const handleRefresh = () => setRefreshAddresses((prev) => prev + 1);
 
+  const [orders, setOrders] = useState<Order[]>([]);
+
   useEffect(() => {
     if (!token) return;
 
@@ -41,6 +44,22 @@ export default function Account() {
       setAddresses(data);
     })();
   }, [token, refreshAddresses]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    (async () => {
+      const response = await fetch("/api/orders", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${token}`,
+        },
+      });
+      const data: Order[] = await response.json();
+      setOrders(data);
+    })();
+  }, [token]);
 
   const handleSideTabChange = (tab: string) => {
     if (tab === "history") {
@@ -72,7 +91,7 @@ export default function Account() {
   if (!featureFlags.settings) return <ComingSoon />;
 
   return (
-    <Box display="flex">
+    <Box display="flex" height="100vh">
       <Sidebar
         settingsProps={settings}
         orderProps={history}
@@ -104,16 +123,16 @@ export default function Account() {
         </Box>
 
         {sideTab === "settings" ? (
-          <>
+          <Box py={4}>
             <Tabs value={tab} onChange={handleChange} sx={{ my: "20px" }}>
               {tabs.map((tab, index) => (
                 <Tab key={index} label={tab} />
               ))}
             </Tabs>
             {getTabContent()}
-          </>
+          </Box>
         ) : (
-          <OrderHistory />
+          <OrderHistory orders={orders} />
         )}
       </Box>
     </Box>
