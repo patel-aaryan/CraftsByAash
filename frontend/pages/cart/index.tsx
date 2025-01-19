@@ -7,7 +7,7 @@ import CartSummary from "@/components/CartSummary";
 import { useUser } from "@/context/userContext";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import featureFlags from "@/utils/featureFlags";
-import { ComingSoon } from "@/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export default function Cart() {
   const { data: session } = useSession();
