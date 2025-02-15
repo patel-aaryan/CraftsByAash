@@ -164,6 +164,7 @@ cython_debug/
 /frontend/.idea/
 /frontend/.run/
 /backend/.idea/
+/database/
 
 # VSCode
 /.vscode/
