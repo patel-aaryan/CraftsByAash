@@ -38,6 +38,8 @@ const HistoryParagraphs = [
 
 export default function About() {
   const imageSize = { width: 600, height: 600 };
+  const image2Url = `${process.env.NEXT_PUBLIC_S3_URL}/about/image2.png`;
+  const image3Url = `${process.env.NEXT_PUBLIC_S3_URL}/about/image3.png`;
 
   return (
     <>
@@ -47,7 +49,7 @@ export default function About() {
         <Box py={8} px={12} gap={2}>
           <InfoSection
             heading="What is Lippan Art"
-            imageSrc="/about/image2.png"
+            imageSrc={image2Url}
             imageAlt="Lippan Art"
             imageSize={imageSize}
             paragraphs={LippanArtParagraphs}
@@ -56,7 +58,7 @@ export default function About() {
 
           <InfoSection
             heading="History"
-            imageSrc="/about/image3.png"
+            imageSrc={image3Url}
             imageAlt="History of Lippan Art"
             imageSize={imageSize}
             paragraphs={HistoryParagraphs}

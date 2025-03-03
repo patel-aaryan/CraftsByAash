@@ -6,10 +6,10 @@ import Image from "next/image";
 
 export function Carousel() {
   const images = [
-    "/home/carousel/image1.png",
-    "/home/carousel/image3.png",
-    "/home/carousel/image3.png",
-    "/home/carousel/image4.png",
+    `${process.env.NEXT_PUBLIC_S3_URL}/home/carousel/image1.png`,
+    `${process.env.NEXT_PUBLIC_S3_URL}/home/carousel/image2.png`,
+    `${process.env.NEXT_PUBLIC_S3_URL}/home/carousel/image3.png`,
+    `${process.env.NEXT_PUBLIC_S3_URL}/home/carousel/image4.png`,
   ];
 
   const [imageIndex, setImageIndex] = useState(0);

@@ -7,6 +7,8 @@ const subheading =
   "We create custom Lippan art with clay and traditional mirrors from Kutch, India";
 
 export default function AboutUs() {
+  const imageUrl = `${process.env.NEXT_PUBLIC_S3_URL}/about/image1.png`;
+
   return (
     <Box
       display="flex"
@@ -33,7 +35,7 @@ export default function AboutUs() {
         alignItems="center"
         width="40%"
       >
-        <Image src="/about/image1.png" alt="hero" height={375} width={375} />
+        <Image src={imageUrl} alt="hero" height={375} width={375} />
       </Box>
     </Box>
   );

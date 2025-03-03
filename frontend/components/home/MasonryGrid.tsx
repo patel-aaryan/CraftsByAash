@@ -6,7 +6,8 @@ import { Masonry } from "@mui/lab";
 export function MasonryGrid() {
   const images = Array.from(
     { length: 14 },
-    (_, index) => `/home/masonry/image${index + 1}.png`,
+    (_, index) =>
+      `${process.env.NEXT_PUBLIC_S3_URL}/home/masonry/image${index + 1}.png`
   );
 
   const [selectedImage, setSelectedImage] = useState("");

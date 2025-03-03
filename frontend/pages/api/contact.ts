@@ -16,7 +16,7 @@ interface RequestBody {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   if (req.method === "POST") {
     const { firstName, lastName, reason, email, phone, message }: RequestBody =
@@ -30,7 +30,7 @@ export default async function handler(
 
     const msg = {
       to: email,
-      from: process.env.NEXT_PUBLIC_EMAIL,
+      from: "aaryan.patel.website@gmail.com",
       subject: `New message from ${firstName} ${lastName} - ${reason}`,
       text: message,
       html: `<p>You have a new help form submission</p>

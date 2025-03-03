@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { Box, Divider, IconButton, Typography } from "@mui/material";
-import {
-  Email,
-  Facebook,
-  Instagram,
-  LinkedIn,
-  Phone,
-  Twitter,
-} from "@mui/icons-material";
+import { Email, Facebook, Instagram, Phone } from "@mui/icons-material";
 
 export default function Footer() {
   const EMAIL = process.env.NEXT_PUBLIC_EMAIL || "someone@example.com";
@@ -21,9 +14,7 @@ export default function Footer() {
 
   const socials = [
     { icon: <Facebook />, link: "https://facebook.com" },
-    { icon: <Twitter />, link: "https://twitter.com" },
     { icon: <Instagram />, link: "https://instagram.com" },
-    { icon: <LinkedIn />, link: "https://linkedin.com" },
   ];
 
   return (

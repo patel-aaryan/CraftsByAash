@@ -8,27 +8,27 @@ export function MaterialsAndTools() {
   const cards = [
     {
       title: "MDF Boards / Plywood",
-      image: "/about/materials/image1.png",
+      image: `${process.env.NEXT_PUBLIC_S3_URL}/about/materials/image1.png`,
       details:
         "Used as a sturdy base instead of mud walls. It is easy to transport or " +
         "create individual pieces for gifting or wall hanging",
     },
     {
       title: "Acrylic / Interior Paint",
-      image: "/about/materials/image2.png",
+      image: `${process.env.NEXT_PUBLIC_S3_URL}/about/materials/image2.png`,
       details:
         "Provide vibrant, long-lasting colors compared to natural pigments.",
     },
     {
       title: "Glass / Synthetic Mirrors",
-      image: "/about/materials/image3.png",
+      image: `${process.env.NEXT_PUBLIC_S3_URL}/about/materials/image3.png`,
       details:
         "Lightweight and safer alternatives to traditional glass mirrors. " +
         "Also available in different colours like gold",
     },
     {
       title: "Clay / Texture Paste",
-      image: "/about/materials/image4.png",
+      image: `${process.env.NEXT_PUBLIC_S3_URL}/about/materials/image4.png`,
       details:
         "Ready-made materials replace traditional mud and cow dung for ease of " +
         "use. Commonly used are texture pastes or epoxy clay for durability",
