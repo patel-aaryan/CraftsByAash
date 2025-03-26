@@ -21,8 +21,8 @@ export default function NavBar() {
   const TABS = ALL_TABS.filter((tab) => tab !== "shop" || featureFlags.shop);
 
   const styles = "transition duration-200";
-  const getHoverStyle = (item = "") => {
-    return pathname === `/${item}` ? "" : "hover:text-gray-300";
+  const getTextStyle = (item = "") => {
+    return pathname === `/${item}` ? "text-teal-300" : "hover:text-gray-300";
   };
 
   return (
@@ -39,7 +39,7 @@ export default function NavBar() {
       >
         <Box display="flex">
           <Link href="/">
-            <div className={`${styles} ${getHoverStyle()}`}>
+            <div className={`${styles} ${getTextStyle()}`}>
               <Typography variant="h6" fontWeight={700}>
                 {COMPANY}
               </Typography>
@@ -56,7 +56,7 @@ export default function NavBar() {
           >
             {TABS.map((item, index) => (
               <Link href={`/${item}`} key={index}>
-                <div className={`${styles} text-sm ${getHoverStyle(item)}`}>
+                <div className={`${styles} text-sm ${getTextStyle(item)}`}>
                   <ListItem disableGutters sx={{ listStyle: "none" }}>
                     {item.toUpperCase()}
                   </ListItem>

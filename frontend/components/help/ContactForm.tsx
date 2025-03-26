@@ -122,7 +122,7 @@ export function ContactForm() {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4 }}>
+    <Paper elevation={3} sx={{ p: 4, mt:8 }}>
       <Typography variant="h5" mb={1}>
         How Can We Help?
       </Typography>

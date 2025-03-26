@@ -1,10 +1,13 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import MaterialsCard from "@/components/about/MaterialsCard";
 
 const MATERIALS_TOOLS = "Materials and Tools";
 
 export function MaterialsAndTools() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const cards = [
     {
       title: "MDF Boards / Plywood",
@@ -36,13 +39,18 @@ export function MaterialsAndTools() {
   ];
 
   return (
-    <>
-      <Typography variant="h4" py={2}>
+    <Box>
+      <Typography
+        variant={isMobile ? "h5" : "h4"}
+        px={isMobile ? 0 : 12}
+        textAlign={isMobile ? "center" : "left"}
+      >
         {MATERIALS_TOOLS}
       </Typography>
 
       <Box
         display="flex"
+        flexWrap={isMobile ? "wrap" : "nowrap"}
         justifyContent="center"
         alignItems="flex-start"
         mt={2}
@@ -53,6 +61,6 @@ export function MaterialsAndTools() {
           <MaterialsCard key={index} {...card} />
         ))}
       </Box>
-    </>
+    </Box>
   );
 }

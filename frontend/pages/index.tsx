@@ -17,7 +17,15 @@ export default function Home() {
       <Box px={8} py={2}>
         {items.map((item, index) => (
           <Box key={index}>
-            <Typography variant="h4" py={2}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                py: { xs: 1.5, md: 2 },
+                fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.125rem' },
+                fontWeight: 600,
+                textAlign: { xs: 'center', md: 'left' }
+              }}
+            >
               {item.label}
             </Typography>
             {item.component}

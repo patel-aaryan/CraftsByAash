@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import AboutUs from "@/components/about/AboutUs";
 import { InfoSection, MaterialsAndTools } from "@/components/about";
 
@@ -37,6 +37,9 @@ const HistoryParagraphs = [
 ];
 
 export default function About() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const imageSize = { width: 600, height: 600 };
   const image2Url = `${process.env.NEXT_PUBLIC_S3_URL}/about/image2.png`;
   const image3Url = `${process.env.NEXT_PUBLIC_S3_URL}/about/image3.png`;
@@ -46,7 +49,7 @@ export default function About() {
       <AboutUs />
 
       <Box display="flex" justifyContent="center" mx="auto">
-        <Box py={8} px={12} gap={2}>
+        <Box py={8} px={isMobile ? 4 : 12} gap={2}>
           <InfoSection
             heading="What is Lippan Art"
             imageSrc={image2Url}
@@ -55,7 +58,6 @@ export default function About() {
             paragraphs={LippanArtParagraphs}
             reverse={false}
           />
-
           <InfoSection
             heading="History"
             imageSrc={image3Url}
@@ -64,10 +66,10 @@ export default function About() {
             paragraphs={HistoryParagraphs}
             reverse={true}
           />
-
-          <MaterialsAndTools />
         </Box>
       </Box>
+
+      <MaterialsAndTools />
     </>
   );
 }
