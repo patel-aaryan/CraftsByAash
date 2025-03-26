@@ -1,20 +1,26 @@
-import Link from "next/link";
-import { Box, Divider, IconButton, Typography } from "@mui/material";
-import { Email, Facebook, Instagram, Phone } from "@mui/icons-material";
+import {
+  Box,
+  Divider,
+  Link,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { Email, Instagram, Phone } from "@mui/icons-material";
 
 export default function Footer() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const EMAIL = process.env.NEXT_PUBLIC_EMAIL || "someone@example.com";
   const PHONE = process.env.NEXT_PUBLIC_PHONE || "+1 (123) 456-7890";
   const ETSY = process.env.NEXT_PUBLIC_ETSY || "https://www.etsy.com/";
+  const INSTAGRAM =
+    process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/";
 
   const contacts = [
     { icon: <Email sx={{ mx: 1 }} />, link: `mailto:${EMAIL}`, text: EMAIL },
     { icon: <Phone sx={{ mx: 1 }} />, link: `tel:${PHONE}`, text: PHONE },
-  ];
-
-  const socials = [
-    { icon: <Facebook />, link: "https://facebook.com" },
-    { icon: <Instagram />, link: "https://instagram.com" },
   ];
 
   return (
@@ -28,10 +34,11 @@ export default function Footer() {
         display="flex"
         justifyContent="space-between"
         flexWrap="wrap"
+        flexDirection={isMobile ? "column" : "row"}
         textAlign="center"
         gap={2}
       >
-        <Box flex="1 1 30%">
+        {/* <Box flex="1 1 30%">
           <Typography variant="h6" color="#1e88e5" fontWeight="bold" mb={1}>
             Customer Care
           </Typography>
@@ -39,7 +46,7 @@ export default function Footer() {
             <Typography>Support</Typography>
             <Typography>FAQ</Typography>
           </Box>
-        </Box>
+        </Box> */}
 
         <Box flex="1 1 30%">
           <Typography variant="h6" color="#1e88e5" fontWeight="bold" mb={1}>
@@ -67,25 +74,17 @@ export default function Footer() {
             </Link>
           </Typography>
 
-          <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-            {socials.map((social, index) => (
-              <IconButton
-                key={index}
-                href={social.link}
-                target="_blank"
-                color="primary"
-              >
-                {social.icon}
-              </IconButton>
-            ))}
-          </Box>
+          <Typography>
+            <Instagram sx={{ color: "#e4405f" }} />{" "}
+            <Link href={INSTAGRAM} target="_blank">
+              craftsby.aash
+            </Link>
+          </Typography>
         </Box>
       </Box>
 
-      {/* Divider */}
       <Divider sx={{ my: 2 }} />
 
-      {/* Footer Bottom */}
       <Typography
         variant="body2"
         color="textSecondary"

@@ -54,6 +54,7 @@ export function MaterialsAndTools() {
         justifyContent="center"
         alignItems="flex-start"
         mt={2}
+        mb={4}
         gap={8}
         px={8}
       >
